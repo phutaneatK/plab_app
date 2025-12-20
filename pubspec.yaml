@@ -1,0 +1,34 @@
+name: plab_app
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  dio: ^5.4.0
+  flutter_bloc: ^9.1.1
+  get_it: ^9.2.0
+  http: ^1.6.0
+
+
+  plab_api:
+    path: ../plab_api
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+
+  uses-material-design: true
