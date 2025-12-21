@@ -9,7 +9,7 @@ import 'package:plab_app/presentation/nasa_history/cubit/nasa_search_query_cubit
 
 final getIt = GetIt.instance;
 
-void setupDependencies() {
+void initGetIt() {
   // HTTP Client
   getIt.registerLazySingleton<http.Client>(() => http.Client());
 

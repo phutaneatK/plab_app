@@ -6,7 +6,7 @@ import 'package:plab_app/presentation/nasa_history/cubit/nasa_search_query_cubit
 import 'package:plab_app/presentation/nasa_history/pages/nasa_history_page.dart';
 
 void main() {
-  setupDependencies();
+  initGetIt();
   runApp(const MyApp());
 }
 

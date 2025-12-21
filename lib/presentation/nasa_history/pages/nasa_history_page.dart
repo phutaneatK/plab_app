@@ -27,10 +27,11 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
     });
   }
 
-  void _loadList() {
+  void _loadList({bool forceFail = false}) {
     final selectedQuery = context.read<NasaSearchQueryCubit>().state.selectedQuery;
     context.read<NasaHistoryBloc>().add(
       LoadNasaHistory(
+        reloadFail: forceFail,
         count: 10,
         query: selectedQuery,
       ),
@@ -51,6 +52,14 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
         title: const Text('NASA History'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.error),
+            tooltip: 'error',
+            onPressed: () {
+              _loadList(forceFail: true);
+            },
+          ),
+
+          IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'ตั้งค่า',
             onPressed: () {
@@ -62,9 +71,10 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
               );
             },
           ),
+
         ],
       ),
-      body: BlocListener<NasaSearchQueryCubit, NasaSearchQueryState>(
+      body: BlocConsumer<NasaSearchQueryCubit, NasaSearchQueryState>(
         listenWhen: (previous, current) {
           // ฟังเฉพาะเมื่อ query เปลี่ยนจริงๆ ไม่ฟังตอน init
           return previous.selectedQuery != current.selectedQuery;
@@ -73,46 +83,44 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
           // เมื่อ query เปลี่ยนจาก Cubit ให้โหลดข้อมูลใหม่
           _loadList();
         },
-        child: Column(
-          children: [
-            // แสดง query ที่เลือกอยู่ปัจจุบัน
-            BlocBuilder<NasaSearchQueryCubit, NasaSearchQueryState>(
-              builder: (context, queryState) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  color: Colors.blue.shade50,
-                  child: Text(
-                        'กำลังค้นหา: ${queryState.selectedQuery.displayName}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                );
-              },
-            ),
-            Expanded(
-              child: BlocBuilder<NasaHistoryBloc, NasaHistoryState>(
-                builder: (context, state) {
-                  if (state is NasaHistoryLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (state is NasaHistoryHasData) {
-                    return _buildList(state.items);
-                  }
-
-                  if (state is NasaHistoryError) {
-                    return _buildError(state.message);
-                  }
-
-                  return const SizedBox.shrink();
-                },
+        builder: (context, queryState) {
+          return Column(
+            children: [
+              // แสดง query ที่เลือกอยู่ปัจจุบัน
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                color: Colors.blue.shade50,
+                child: Text(
+                  'กำลังค้นหา: ${queryState.selectedQuery.displayName}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
+              Expanded(
+                child: BlocBuilder<NasaHistoryBloc, NasaHistoryState>(
+                  builder: (context, state) {
+                    if (state is NasaHistoryLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (state is NasaHistoryHasData) {
+                      return _buildList(state.items);
+                    }
+
+                    if (state is NasaHistoryError) {
+                      return _buildError(state.message);
+                    }
+
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
