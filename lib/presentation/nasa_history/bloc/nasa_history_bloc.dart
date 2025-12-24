@@ -21,11 +21,11 @@ class NasaHistoryBloc extends Bloc<NasaHistoryEvent, NasaHistoryState> {
           emit(NasaHistoryError('เกิดข้อผิดพลาด ไม่สามารถดึงข้อมูลได้ กรุณาลองใหม่อีกครั้ง'));
         },
         (result) {
-          if (event.count != null && event.count! > 0) {
-            final limitedResult = result.take(event.count!).toList();
-            emit(NasaHistoryHasData(limitedResult));
-            return;
-          }
+          // if (event.count != null && event.count! > 0) {
+          //   final limitedResult = result.take(event.count!).toList();
+          //   emit(NasaHistoryHasData(limitedResult));
+          //   return;
+          // }
 
           if (result.isEmpty) {
             emit(NasaHistoryError('ไม่พบข้อมูล'));
