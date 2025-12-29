@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plab_api/domain/entities/nasa_entity.dart';
 import 'package:plab_app/presentation/nasa_history/widgets/nasa_history_card.dart';
+import 'package:plab_app/presentation/login/pages/login_page.dart';
 
 import '../bloc/nasa_history_bloc.dart';
 import '../bloc/nasa_history_event.dart';
@@ -72,6 +73,19 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
             },
           ),
 
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ),
+                (route) => false,
+              );
+            },
+          ),
+          
         ],
       ),
       body: BlocConsumer<NasaSearchQueryCubit, NasaSearchQueryState>(
