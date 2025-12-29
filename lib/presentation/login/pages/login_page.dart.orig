@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
 <<<<<<< HEAD
                           Icons.bus_alert,
 =======
-                          Icons.star_border,
+                          Icons.rocket,
 >>>>>>> feature/login
                           size: 80,
                           color: Colors.blue.shade700,
