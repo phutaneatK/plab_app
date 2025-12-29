@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plab_app/injection.dart';
 import 'package:plab_app/presentation/nasa_history/bloc/nasa_history_bloc.dart';
 import 'package:plab_app/presentation/nasa_history/cubit/nasa_search_query_cubit.dart';
-import 'package:plab_app/presentation/nasa_history/pages/nasa_history_page.dart';
+import 'package:plab_app/presentation/login/pages/login_page.dart';
 
 void main() {
   initGetIt();
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
         ),
-        home: const NasaHistoryPage(),
+        home: const LoginPage(),
       ),
     );
   }
