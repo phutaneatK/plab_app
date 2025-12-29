@@ -10,8 +10,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController(text: 'admin');
-  final _passwordController = TextEditingController(text: '1234');
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         // Logo
                         Icon(
-                          Icons.bus_alert,
+                          Icons.rocket_launch,
                           size: 80,
                           color: Colors.blue.shade700,
                         ),

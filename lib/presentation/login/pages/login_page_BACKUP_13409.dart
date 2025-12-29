@@ -84,7 +84,11 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         // Logo
                         Icon(
+<<<<<<< HEAD
                           Icons.bus_alert,
+=======
+                          Icons.star_border,
+>>>>>>> feature/login
                           size: 80,
                           color: Colors.blue.shade700,
                         ),
