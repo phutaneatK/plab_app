@@ -75,7 +75,7 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
 
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
+            tooltip: 'Logout to Login Page',
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
