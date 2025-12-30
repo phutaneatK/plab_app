@@ -1,0 +1,156 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:plab_api/domain/entities/nasa_entity.dart';
+import 'package:plab_app/core/router/app_router.dart';
+import 'package:plab_app/presentation/nasa/widgets/nasa_history_card.dart';
+
+import '../bloc/nasa_history_bloc.dart';
+import '../bloc/nasa_history_event.dart';
+import '../bloc/nasa_history_state.dart';
+import '../cubit/nasa_search_query_cubit.dart';
+import '../cubit/nasa_search_query_state.dart';
+
+class NasaHistoryPage extends StatefulWidget {
+  const NasaHistoryPage({super.key});
+
+    static const String routerName = 'nasa_setting';
+
+
+  @override
+  State<NasaHistoryPage> createState() => _NasaHistoryPageState();
+}
+
+class _NasaHistoryPageState extends State<NasaHistoryPage> {
+  @override
+  void initState() {
+    super.initState();
+    // โหลดข้อมูลครั้งแรกหลังจาก build เสร็จ
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadList();
+    });
+  }
+
+  void _loadList({bool forceFail = false}) {
+    final selectedQuery = context.read<NasaSearchQueryCubit>().state.selectedQuery;
+    context.read<NasaHistoryBloc>().add(
+      LoadNasaHistory(
+        reloadFail: forceFail,
+        count: 10,
+        query: selectedQuery,
+      ),
+    );
+  }
+
+  // สำหรับ RefreshIndicator ต้องคืน Future
+  Future<void> _onRefresh() async {
+    _loadList();
+    // รอให้ bloc ทำงานเสร็จก่อนปิด refresh indicator
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<NasaSearchQueryCubit, NasaSearchQueryState>(
+      listenWhen: (previous, current) {
+        // ฟังเฉพาะเมื่อ query เปลี่ยนจริงๆ ไม่ฟังตอน init
+        return previous.selectedQuery != current.selectedQuery;
+      },
+      listener: (context, state) {
+        // เมื่อ query เปลี่ยนจาก Cubit ให้โหลดข้อมูลใหม่
+        _loadList();
+      },
+      builder: (context, queryState) {
+        return Column(
+          children: [
+            // แสดง query ที่เลือกอยู่ปัจจุบัน
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              color: Colors.blue.shade50,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'กำลังค้นหา: ${queryState.selectedQuery.displayName}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  // ปุ่ม Error
+                  IconButton(
+                    icon: const Icon(Icons.error, color: Colors.red),
+                    tooltip: 'Test Error',
+                    onPressed: () {
+                      _loadList(forceFail: true);
+                    },
+                  ),
+                  // ปุ่ม ตั้งค่า
+                  IconButton(
+                    icon: const Icon(Icons.settings, color: Colors.blue),
+                    tooltip: 'ตั้งค่า',
+                    onPressed: () {
+                      context.push(PRouter.nasaSettingRouter);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<NasaHistoryBloc, NasaHistoryState>(
+                builder: (context, state) {
+                  if (state is NasaHistoryLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (state is NasaHistoryHasData) {
+                    return _buildList(state.items);
+                  }
+
+                  if (state is NasaHistoryError) {
+                    return _buildError(state.message);
+                  }
+
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildList(List<NasaEntity> items) {
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return NasaCard(item: item);
+        },
+      ),
+    );
+  }
+
+  Widget _buildError(String message) {
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Center(child: Text(message)),
+          ),
+        ],
+      ),
+    );
+  }
+}

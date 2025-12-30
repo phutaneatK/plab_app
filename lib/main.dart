@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:plab_app/injection.dart';
 import 'package:plab_app/core/router/app_router.dart';
 
-void main() {
+Future<void> main() async {
+  // โหลด .env file
+  await dotenv.load(fileName: ".env");
+  
   initGetIt();
   runApp(const MyApp());
 }
