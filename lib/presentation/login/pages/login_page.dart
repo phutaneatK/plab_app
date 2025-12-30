@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:plab_app/presentation/nasa_history/pages/nasa_history_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:plab_app/core/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  static const String routerName = 'login';
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -12,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController(text: 'admin');
   final _passwordController = TextEditingController(text: '1234');
+  final AuthService _authService = AuthService();
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -22,25 +26,28 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() {
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
       // Simulate login delay
-      Future.delayed(const Duration(milliseconds: 500), () {
-        final username = _usernameController.text;
-        final password = _passwordController.text;
+      await Future.delayed(const Duration(milliseconds: 500));
 
-        if (username == 'admin' && password == '1234') {
-          // Login success
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const NasaHistoryPage(),
-            ),
-          );
-        } else {
-          // Login failed
-          setState(() => _isLoading = false);
+      final username = _usernameController.text;
+      final password = _passwordController.text;
+
+      if (username == 'admin' && password == '1234') {
+        // บันทึก token
+        await _authService.saveToken('admin:1234');
+
+        // Login success - ไปหน้า home
+        if (mounted) {
+          context.go('/home');
+        }
+      } else {
+        // Login failed
+        setState(() => _isLoading = false);
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Invalid username or password'),
@@ -48,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         }
-      });
+      }
     }
   }
 
@@ -60,10 +67,7 @@ class _LoginPageState extends State<LoginPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.blue.shade400,
-              Colors.blue.shade700,
-            ],
+            colors: [Colors.blue.shade400, Colors.blue.shade700],
           ),
         ),
         child: SafeArea(
@@ -83,15 +87,12 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         // Logo
-                        Icon(
-                          Icons.home,
-                          size: 80,
-                          color: Colors.blue.shade700,
-                        ),
+                        Icon(Icons.home, size: 80, color: Colors.blue.shade700),
                         const SizedBox(height: 16),
                         Text(
                           'Plab App Login',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue.shade700,
                               ),
@@ -99,9 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 8),
                         Text(
                           'Sign in to continue',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey.shade600,
-                              ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Colors.grey.shade600),
                         ),
                         const SizedBox(height: 32),
 
