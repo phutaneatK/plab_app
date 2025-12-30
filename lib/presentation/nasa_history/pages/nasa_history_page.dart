@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:plab_api/domain/entities/nasa_entity.dart';
+import 'package:plab_app/core/router/app_router.dart';
 import 'package:plab_app/presentation/nasa_history/widgets/nasa_history_card.dart';
-import 'package:plab_app/presentation/login/pages/login_page.dart';
 
 import '../bloc/nasa_history_bloc.dart';
 import '../bloc/nasa_history_event.dart';
 import '../bloc/nasa_history_state.dart';
 import '../cubit/nasa_search_query_cubit.dart';
 import '../cubit/nasa_search_query_state.dart';
-import 'nasa_settings_page.dart';
 
 class NasaHistoryPage extends StatefulWidget {
   const NasaHistoryPage({super.key});
+
+    static const String routerName = 'nasa_setting';
+
 
   @override
   State<NasaHistoryPage> createState() => _NasaHistoryPageState();
@@ -48,94 +51,75 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('NASA History'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.error),
-            tooltip: 'error',
-            onPressed: () {
-              _loadList(forceFail: true);
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: 'ตั้งค่า',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const NasaSettingsPage(),
-                ),
-              );
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout to Login Page',
-            onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
-                ),
-                (route) => false,
-              );
-            },
-          ),
-          
-        ],
-      ),
-      body: BlocConsumer<NasaSearchQueryCubit, NasaSearchQueryState>(
-        listenWhen: (previous, current) {
-          // ฟังเฉพาะเมื่อ query เปลี่ยนจริงๆ ไม่ฟังตอน init
-          return previous.selectedQuery != current.selectedQuery;
-        },
-        listener: (context, state) {
-          // เมื่อ query เปลี่ยนจาก Cubit ให้โหลดข้อมูลใหม่
-          _loadList();
-        },
-        builder: (context, queryState) {
-          return Column(
-            children: [
-              // แสดง query ที่เลือกอยู่ปัจจุบัน
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                color: Colors.blue.shade50,
-                child: Text(
-                  'กำลังค้นหา: ${queryState.selectedQuery.displayName}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+    return BlocConsumer<NasaSearchQueryCubit, NasaSearchQueryState>(
+      listenWhen: (previous, current) {
+        // ฟังเฉพาะเมื่อ query เปลี่ยนจริงๆ ไม่ฟังตอน init
+        return previous.selectedQuery != current.selectedQuery;
+      },
+      listener: (context, state) {
+        // เมื่อ query เปลี่ยนจาก Cubit ให้โหลดข้อมูลใหม่
+        _loadList();
+      },
+      builder: (context, queryState) {
+        return Column(
+          children: [
+            // แสดง query ที่เลือกอยู่ปัจจุบัน
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              color: Colors.blue.shade50,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'กำลังค้นหา: ${queryState.selectedQuery.displayName}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
+                  // ปุ่ม Error
+                  IconButton(
+                    icon: const Icon(Icons.error, color: Colors.red),
+                    tooltip: 'Test Error',
+                    onPressed: () {
+                      _loadList(forceFail: true);
+                    },
+                  ),
+                  // ปุ่ม ตั้งค่า
+                  IconButton(
+                    icon: const Icon(Icons.settings, color: Colors.blue),
+                    tooltip: 'ตั้งค่า',
+                    onPressed: () {
+                      context.push(PRouter.nasaSettingRouter);
+                    },
+                  ),
+                ],
               ),
-              Expanded(
-                child: BlocBuilder<NasaHistoryBloc, NasaHistoryState>(
-                  builder: (context, state) {
-                    if (state is NasaHistoryLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+            ),
+            Expanded(
+              child: BlocBuilder<NasaHistoryBloc, NasaHistoryState>(
+                builder: (context, state) {
+                  if (state is NasaHistoryLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                    if (state is NasaHistoryHasData) {
-                      return _buildList(state.items);
-                    }
+                  if (state is NasaHistoryHasData) {
+                    return _buildList(state.items);
+                  }
 
-                    if (state is NasaHistoryError) {
-                      return _buildError(state.message);
-                    }
+                  if (state is NasaHistoryError) {
+                    return _buildError(state.message);
+                  }
 
-                    return const SizedBox.shrink();
-                  },
-                ),
+                  return const SizedBox.shrink();
+                },
               ),
-            ],
-          );
-        },
-      ),
+            ),
+          ],
+        );
+      },
     );
   }
 

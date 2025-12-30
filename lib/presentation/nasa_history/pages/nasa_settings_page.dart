@@ -8,6 +8,8 @@ import '../cubit/nasa_search_query_state.dart';
 class NasaSettingsPage extends StatefulWidget {
   const NasaSettingsPage({super.key});
 
+  static const String routerName = 'nasa_settings';
+
   @override
   State<NasaSettingsPage> createState() => _NasaSettingsPageState();
 }
@@ -73,7 +75,9 @@ class _NasaSettingsPageState extends State<NasaSettingsPage> {
                         }).toList(),
                         onChanged: (value) {
                           if (value != null) {
-                            context.read<NasaSearchQueryCubit>().changeQuery(value);
+                            context.read<NasaSearchQueryCubit>().changeQuery(
+                              value,
+                            );
                           }
                         },
                       ),
@@ -99,10 +103,15 @@ class _NasaSettingsPageState extends State<NasaSettingsPage> {
                           leading: _getIcon(query),
                           title: Text(query.displayName),
                           trailing: isSelected
-                              ? const Icon(Icons.check_circle, color: Colors.blue)
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.blue,
+                                )
                               : const Icon(Icons.circle_outlined),
                           onTap: () {
-                            context.read<NasaSearchQueryCubit>().changeQuery(query);
+                            context.read<NasaSearchQueryCubit>().changeQuery(
+                              query,
+                            );
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
