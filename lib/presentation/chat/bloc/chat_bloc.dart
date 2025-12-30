@@ -48,7 +48,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         },
       );
 
-      emit(ChatConnected(List.from(_messages)));
+      emit(ChatConnected(List.from(_messages), isProcessing: false));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -63,15 +63,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onSendMessage(SendMessage event, Emitter<ChatState> emit) async {
     try {
+      // Set processing state
+      emit(ChatConnected(List.from(_messages), isProcessing: true));
       await sendChatMessage(event.message);
+      // ข้อความจะถูกเพิ่มผ่าน stream listener
     } catch (e) {
+      emit(ChatConnected(List.from(_messages), isProcessing: false));
       emit(ChatError(e.toString()));
     }
   }
 
   void _onReceiveMessage(ReceiveMessage event, Emitter<ChatState> emit) {
     _messages.add(event.message);
-    emit(ChatConnected(List.from(_messages)));
+    // ถ้าข้อความที่ได้รับไม่ใช่ของเรา แสดงว่า AI ตอบกลับแล้ว
+    final isProcessing = event.message.isMine;
+    emit(ChatConnected(List.from(_messages), isProcessing: isProcessing));
   }
 
   @override

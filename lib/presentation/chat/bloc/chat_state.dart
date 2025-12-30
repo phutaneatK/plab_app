@@ -12,11 +12,12 @@ class ChatConnecting extends ChatState {}
 
 class ChatConnected extends ChatState {
   final List<ChatMessageEntity> messages;
+  final bool isProcessing; // เพิ่ม flag สำหรับการประมวลผล
 
-  ChatConnected(this.messages);
+  ChatConnected(this.messages, {this.isProcessing = false});
 
   @override
-  List<Object?> get props => [messages];
+  List<Object?> get props => [messages, isProcessing];
 }
 
 class ChatError extends ChatState {

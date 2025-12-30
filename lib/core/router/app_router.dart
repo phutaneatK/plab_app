@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plab_app/presentation/login/pages/login_page.dart';
 import 'package:plab_app/presentation/home/pages/home_page.dart';
-import 'package:plab_app/presentation/nasa_history/pages/nasa_settings_page.dart';
+import 'package:plab_app/presentation/nasa/pages/nasa_settings_page.dart';
 import 'package:plab_app/core/services/auth_service.dart';
-import 'package:plab_app/presentation/nasa_history/bloc/nasa_history_bloc.dart';
-import 'package:plab_app/presentation/nasa_history/cubit/nasa_search_query_cubit.dart';
+import 'package:plab_app/presentation/nasa/bloc/nasa_history_bloc.dart';
+import 'package:plab_app/presentation/nasa/cubit/nasa_search_query_cubit.dart';
 import 'package:plab_app/presentation/chat/bloc/chat_bloc.dart';
 import 'package:plab_app/injection.dart';
 

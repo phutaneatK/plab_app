@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plab_app/presentation/nasa_history/pages/nasa_history_page.dart';
-import 'package:plab_app/presentation/empty/pages/empty_page.dart';
+import 'package:plab_app/presentation/nasa/pages/nasa_history_page.dart';
+import 'package:plab_app/presentation/chat/pages/chat_page.dart';
 import 'package:plab_app/core/services/auth_service.dart';
 
 class HomePage extends StatefulWidget {

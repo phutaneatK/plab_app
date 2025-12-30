@@ -1,11 +1,12 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:plab_api/data/datasources/nasa_remote_datasource.dart';
 import 'package:plab_api/data/repositories/nasa_repository_imp.dart';
 import 'package:plab_api/domain/repositories/nasa_repository.dart';
 import 'package:plab_api/domain/usecases/get_nasa_history.dart';
-import 'package:plab_app/presentation/nasa_history/bloc/nasa_history_bloc.dart';
-import 'package:plab_app/presentation/nasa_history/cubit/nasa_search_query_cubit.dart';
+import 'package:plab_app/presentation/nasa/bloc/nasa_history_bloc.dart';
+import 'package:plab_app/presentation/nasa/cubit/nasa_search_query_cubit.dart';
 
 // Chat imports
 import 'package:plab_api/data/datasources/chat_remote_datasource.dart';
@@ -52,7 +53,9 @@ void initGetIt() {
   // ==================== CHAT ====================
   // Data sources
   getIt.registerLazySingleton<ChatRemoteDataSource>(
-    () => ChatRemoteDataSourceImpl(),
+    () => ChatRemoteDataSourceImpl(
+      apiKey: dotenv.env['GEMINI_API_KEY'] ?? '',
+    ),
   );
 
   // Repositories
