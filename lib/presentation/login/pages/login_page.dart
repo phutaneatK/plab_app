@@ -5,7 +5,7 @@ import 'package:plab_app/core/services/auth_service.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
-  static const String routerName = 'login';
+  static const String routerName = 'login_page';
 
   @override
   State<LoginPage> createState() => _LoginPageState();

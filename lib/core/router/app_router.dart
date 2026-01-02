@@ -8,6 +8,7 @@ import 'package:plab_app/core/services/auth_service.dart';
 import 'package:plab_app/presentation/nasa/bloc/nasa_history_bloc.dart';
 import 'package:plab_app/presentation/nasa/cubit/nasa_search_query_cubit.dart';
 import 'package:plab_app/presentation/chat/bloc/chat_bloc.dart';
+import 'package:plab_app/presentation/pm25/blocs/pm25_bloc.dart';
 import 'package:plab_app/injection.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -39,6 +40,7 @@ class PRouter {
           providers: [
             BlocProvider(create: (context) => getIt<NasaHistoryBloc>()),
             BlocProvider(create: (context) => getIt<ChatBloc>()),
+            BlocProvider(create: (context) => getIt<Pm25Bloc>()),
             BlocProvider(create: (context) => getIt<NasaSearchQueryCubit>()),
           ],
           child: const HomePage(),
