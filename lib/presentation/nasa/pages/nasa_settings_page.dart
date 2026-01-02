@@ -8,7 +8,7 @@ import '../cubit/nasa_search_query_state.dart';
 class NasaSettingsPage extends StatefulWidget {
   const NasaSettingsPage({super.key});
 
-  static const String routerName = 'nasa_settings';
+  static const String routerName = 'nasa_settings_page';
 
   @override
   State<NasaSettingsPage> createState() => _NasaSettingsPageState();
