@@ -4,7 +4,7 @@ import 'package:plab_api/domain/enums/pm_province_enum.dart';
 import 'package:plab_app/presentation/pm25/blocs/pm25_bloc.dart';
 import 'package:plab_app/presentation/pm25/blocs/pm25_event.dart';
 import 'package:plab_app/presentation/pm25/blocs/pm25_state.dart';
-import 'package:plab_app/utlis.dart';
+import 'package:plab_app/core/utils/logger.dart';
 
 class Pm25HistoryPage extends StatefulWidget {
   const Pm25HistoryPage({super.key});
@@ -19,7 +19,7 @@ class _Pm25HistoryPageState extends State<Pm25HistoryPage> {
   @override
   void initState() {
     super.initState();
-    log('Pm25HistoryPage: initState ~');
+    AppLogger.log('Pm25HistoryPage: initState ~');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadList();
     });
@@ -34,7 +34,7 @@ class _Pm25HistoryPageState extends State<Pm25HistoryPage> {
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
-  Color _getAqiColor(int aqi) {
+  Color _getAqiColor(double aqi) {
     if (aqi <= 50) return Colors.green;
     if (aqi <= 100) return Colors.yellow.shade700;
     if (aqi <= 150) return Colors.orange;
@@ -73,7 +73,10 @@ class _Pm25HistoryPageState extends State<Pm25HistoryPage> {
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
-                    title: Text('${PMProvinceEnum.toDisplayName(item.code)}',style: TextStyle(fontWeight: FontWeight.bold),),
+                    title: Text(
+                      '${item.code.toDisplayName()}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

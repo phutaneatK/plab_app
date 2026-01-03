@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plab_api/domain/entities/nasa_entity.dart';
-import 'package:plab_app/core/router/app_router.dart';
+import 'package:plab_app/core/router/app_routes.dart';
 import 'package:plab_app/presentation/nasa/widgets/nasa_history_card.dart';
 
 import '../bloc/nasa_history_bloc.dart';
@@ -92,7 +92,7 @@ class _NasaHistoryPageState extends State<NasaHistoryPage> {
                     icon: const Icon(Icons.settings, color: Colors.blue),
                     tooltip: 'ตั้งค่า',
                     onPressed: () {
-                      context.push(PRouter.nasaSettingRouter);
+                      context.push(AppRoutes.nasaSettings);
                     },
                   ),
                 ],

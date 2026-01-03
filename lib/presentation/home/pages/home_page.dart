@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plab_app/core/router/app_routes.dart';
 import 'package:plab_app/presentation/nasa/pages/nasa_history_page.dart';
 import 'package:plab_app/presentation/chat/pages/chat_page.dart';
 import 'package:plab_app/core/services/auth_service.dart';
@@ -7,8 +8,6 @@ import 'package:plab_app/presentation/pm25/pages/pm25_history_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
-  static const String routerName = 'home_page';
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -59,7 +58,7 @@ class _HomePageState extends State<HomePage> {
       await _authService.deleteToken();
       // กลับไปหน้า login และลบ history ทั้งหมด
       if (mounted) {
-        context.go('/login');
+        context.go(AppRoutes.login);
       }
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plab_app/core/router/app_routes.dart';
 import 'package:plab_app/presentation/login/pages/login_page.dart';
 import 'package:plab_app/presentation/home/pages/home_page.dart';
 import 'package:plab_app/presentation/nasa/pages/nasa_settings_page.dart';
@@ -13,30 +14,41 @@ import 'package:plab_app/injection.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-class PRouter {
+class AppRouter {
+  // Private constructor
+  AppRouter._();
+
   static final AuthService _authService = AuthService();
-
-  static const homeRouter = "/${HomePage.routerName}";
-  static const loginRouter = "/${LoginPage.routerName}";
-
-  static const nasaSettingRouter = "/${NasaSettingsPage.routerName}";
 
   static final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
-    initialLocation: loginRouter,
+    initialLocation: AppRoutes.login,
     redirect: (context, state) async {
       final isValidToken = await _authService.isValidToken();
-      final isGoingToLogin = state.matchedLocation == loginRouter;
-      if (!isValidToken && !isGoingToLogin) return loginRouter;
-      if (isValidToken && isGoingToLogin) return homeRouter;
+      final isGoingToLogin = state.matchedLocation == AppRoutes.login;
+      
+      // ถ้ายังไม่ได้ login และไม่ได้กำลังไปหน้า login -> redirect ไป login
+      if (!isValidToken && !isGoingToLogin) return AppRoutes.login;
+      
+      // ถ้า login แล้วแต่กำลังไปหน้า login -> redirect ไป home
+      if (isValidToken && isGoingToLogin) return AppRoutes.home;
+      
       return null;
     },
     routes: [
-      pPage(path: LoginPage.routerName, page: const LoginPage()),
-      pPage(
-        path: HomePage.routerName,
-        page: MultiBlocProvider(
+      // ==================== Login Route ====================
+      GoRoute(
+        path: AppRoutes.login,
+        name: AppRoutes.loginName,
+        builder: (context, state) => const LoginPage(),
+      ),
+
+      // ==================== Home Route ====================
+      GoRoute(
+        path: AppRoutes.home,
+        name: AppRoutes.homeName,
+        builder: (context, state) => MultiBlocProvider(
           providers: [
             BlocProvider(create: (context) => getIt<NasaHistoryBloc>()),
             BlocProvider(create: (context) => getIt<ChatBloc>()),
@@ -46,17 +58,16 @@ class PRouter {
           child: const HomePage(),
         ),
       ),
-      pPage(
-        path: NasaSettingsPage.routerName,
-        page: BlocProvider.value(
+
+      // ==================== NASA Settings Route ====================
+      GoRoute(
+        path: AppRoutes.nasaSettings,
+        name: AppRoutes.nasaSettingsName,
+        builder: (context, state) => BlocProvider.value(
           value: getIt<NasaSearchQueryCubit>(),
           child: const NasaSettingsPage(),
         ),
       ),
     ],
   );
-}
-
-GoRoute pPage({required String path, required Widget page}) {
-  return GoRoute(path: '/$path', name: path, builder: (context, state) => page);
 }

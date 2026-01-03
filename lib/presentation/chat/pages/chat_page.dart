@@ -4,7 +4,7 @@ import 'package:plab_app/presentation/chat/bloc/chat_bloc.dart';
 import 'package:plab_app/presentation/chat/bloc/chat_event.dart';
 import 'package:plab_app/presentation/chat/bloc/chat_state.dart';
 import 'package:intl/intl.dart';
-import 'package:plab_app/utlis.dart';
+import 'package:plab_app/core/utils/logger.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -20,7 +20,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    log('ChatPage: initState ~');
+    AppLogger.log('ChatPage: initState ~');
     context.read<ChatBloc>().add(ConnectChat());
   }
 

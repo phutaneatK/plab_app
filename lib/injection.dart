@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:plab_app/core/config/app_config.dart';
 
 // NASA imports
 import 'package:plab_api/data/datasources/nasa_remote_datasource.dart';
@@ -29,6 +29,11 @@ import 'package:plab_app/presentation/pm25/blocs/pm25_bloc.dart';
 final getIt = GetIt.instance;
 
 void initGetIt() {
+  // ==================== CONFIG ====================
+  // อ่าน environment variables ครั้งเดียวตอนเริ่มต้น
+  final config = AppConfig.fromEnv();
+  getIt.registerSingleton<AppConfig>(config);
+
   // HTTP Client
   getIt.registerLazySingleton<http.Client>(() => http.Client());
 
@@ -56,7 +61,7 @@ void initGetIt() {
   // ==================== CHAT ====================
   // Data sources
   getIt.registerLazySingleton<ChatRemoteDataSource>(
-    () => ChatRemoteDataSourceImpl(apiKey: dotenv.env['GEMINI_API_KEY'] ?? ''),
+    () => ChatRemoteDataSourceImpl(apiKey: getIt<AppConfig>().geminiApiKey),
   );
 
   // Repositories
@@ -87,7 +92,7 @@ void initGetIt() {
 
   // Data sources
   getIt.registerLazySingleton<PMRemoteDatasource>(
-    () => PMRemoteDatasourceImpl(token: dotenv.env['PM_API_KEY'] ?? ''),
+    () => PMRemoteDatasourceImpl(token: getIt<AppConfig>().pmApiKey),
   );
 
   // Repositories
